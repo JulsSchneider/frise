@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>Admin-Panel – Friseursalon</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Seitenleiste Navigation -->
+  <aside class="sidebar">
+    <ul>
+      <li><a href="#" onclick="showSection('dashboard-section')">Dashboard</a></li>
+      <li><a href="#" onclick="showSection('calendar-section-admin')">Kalender</a></li>
+      <li><a href="#" onclick="showSection('buchungen-section')">Buchungen</a></li>
+      <li><a href="#" onclick="showSection('kunden-section')">Kunden</a></li>
+      <li><a href="#" onclick="showSection('terminverwaltung-section')">Terminverwaltung</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </aside>
+
+  <!-- Hauptinhalt -->
+  <div class="content">
+    <!-- Dashboard Section -->
+    <div id="dashboard-section">
+      <h2>Dashboard</h2>
+      <div class="stats-grid">
+        <div class="stat-card">Heutige Termine <span id="todayCount">0</span></div>
+        <div class="stat-card">Warteliste <span id="waitlistCount">0</span></div>
+      </div>
+      <h3>Kommende Termine</h3>
+      <table id="upcomingAppointmentsTable">
+        <tr>
+          <th>Kunde (Tel)</th><th>Termin</th><th>Details</th>
+        </tr>
+        <!-- Einträge werden per JS eingefügt -->
+      </table>
+    </div>
+
+    <!-- Kalender Section -->
+    <div id="calendar-section-admin" style="display:none;">
+      <h2>Kalender</h2>
+      <div class="calendar-wrapper">
+        <table class="calendar">
+          <thead>
+            <tr><th>Mo</th><th>Di</th><th>Mi</th><th>Do</th><th>Fr</th><th>Sa</th><th>So</th></tr>
+          </thead>
+          <tbody id="calendarBodyAdmin"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Buchungen Section -->
+    <div id="buchungen-section" style="display:none;">
+      <h2>Buchungen</h2>
+      <div class="table-responsive">
+        <table id="allBookingsTable">
+          <tr>
+            <th>Datum</th><th>Uhrzeit</th><th>Kunde</th><th>Service</th><th>Status</th>
+          </tr>
+          <!-- Einträge werden per JS eingefügt -->
+        </table>
+      </div>
+    </div>
+
+    <!-- Kunden Section -->
+    <div id="kunden-section" style="display:none;">
+      <h2>Kunden</h2>
+      <div class="table-responsive">
+        <table id="customersTable">
+          <tr>
+            <th>Name</th><th>E-Mail</th><th>Telefon</th><th>Letzter Besuch</th>
+          </tr>
+          <!-- Einträge werden per JS eingefügt -->
+        </table>
+      </div>
+    </div>
+
+    <!-- Terminverwaltung Section -->
+    <div id="terminverwaltung-section" style="display:none;">
+      <h2>Terminverwaltung</h2>
+      <p>Noch keine Funktion implementiert.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

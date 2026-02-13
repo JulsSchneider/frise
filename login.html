@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – Friseursalon</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Login</h1>
+  <form onsubmit="loginUser(event)" class="login-form">
+    <input type="email" id="loginEmail" placeholder="E-Mail" required />
+    <input type="password" id="loginPass" placeholder="Passwort" required />
+    <button type="submit">Einloggen</button>
+  </form>
+  <p>Noch kein Konto? <a href="register.html">Jetzt registrieren</a></p>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrierung – Friseursalon</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Registrieren</h1>
+  <form onsubmit="registerUser(event)" class="register-form">
+    <input type="text" id="regName" placeholder="Name" required />
+    <input type="email" id="regEmail" placeholder="E-Mail" required />
+    <input type="tel" id="regPhone" placeholder="Telefon" required />
+    <input type="password" id="regPass" placeholder="Passwort" required />
+    <button type="submit">Registrieren</button>
+  </form>
+  <p>Schon Kunde? <a href="login.html">Zum Login</a></p>
+
+  <script src="script.js"></script>
+</body>
+</html>

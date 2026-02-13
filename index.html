@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Friseur-Terminbuchungssystem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6d28d9;
+            --primary-dark: #5b21b6;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text: #f9fafb;
+                --text-light: #9ca3af;
+                --bg: #111827;
+                --card: #1f2937;
+                --border: #374151;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .nav-btn.active {
+            background-color: rgba(109, 40, 217, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Login Screen */
+        .login-card {
+            max-width: 400px;
+            margin: 30px auto;
+            background-color: var(--card);
+            border-radius: 16px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .login-subtitle {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--card);
+            color: var(--text);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.2);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(109, 40, 217, 0.1);
+        }
+
+        .btn-small {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Calendar */
+        .calendar-header {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .calendar-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .calendar-nav-btn {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .calendar-nav-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .month-year {
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: center;
+            flex: 1;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 500;
+            padding: 8px 5px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .calendar-day {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-height: 100px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-number {
+            align-self: flex-end;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .day-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .slot {
+            font-size: 0.75rem;
+            padding: 6px 4px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slot-available {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .slot-booked {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .slot-time {
+            font-weight: 500;
+        }
+
+        .slot-customer {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .day-outside {
+            opacity: 0.4;
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        /* Bookings Table */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+        }
+
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            min-width: 500px;
+        }
+
+        .bookings-table th, 
+        .bookings-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bookings-table th {
+            background-color: rgba(0,0,0,0.03);
+            font-weight: 600;
+        }
+
+        .bookings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bookings-table tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            padding: 15px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0 10px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .modal-footer {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+        }
+
+        /* PayPal Button */
+        .paypal-btn {
+            background-color: #0070ba;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .paypal-btn:hover {
+            background-color: #005ea6;
+        }
+
+        /* Admin Panel */
+        .admin-container {
+            display: none;
+            grid-template-columns: 1fr;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 768px) {
+            .admin-container {
+                grid-template-columns: 250px 1fr;
+            }
+        }
+
+        .admin-sidebar {
+            background-color: #1f2937;
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 767px) {
+            .admin-sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                height: auto;
+                z-index: 100;
+                padding: 10px;
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                gap: 10px;
+            }
+            
+            .admin-sidebar h2 {
+                display: none;
+            }
+            
+            .admin-menu-item {
+                white-space: nowrap;
+                padding: 10px 15px;
+            }
+            
+            .admin-content {
+                padding-bottom: 80px;
+            }
+        }
+
+        .admin-content {
+            padding: 20px;
+            background-color: #f9fafb;
+            overflow-y: auto;
+        }
+
+        .admin-menu-item {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-menu-item:hover {
+            background-color: #374151;
+        }
+
+        .admin-menu-item.active {
+            background-color: #6d28d9;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #6d28d9;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Customer Profile */
+        .profile-card {
+            background-color: var(--card);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .profile-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: var(--text-light);
+            word-break: break-all;
+        }
+
+        /* Time Slot Form */
+        .time-slot-form {
+            background-color: var(--card);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-slot {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .time-slot.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .time-slot.booked {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            cursor: not-allowed;
+        }
+
+        /* Responsive Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-10 { margin-bottom: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="client-container">
+        <!-- Header (visible after login) -->
+        <header class="header hidden" id="app-header">
+            <a href="#" class="logo">
+                <i class="fas fa-scissors"></i>
+                <span>Heiko's Friseursalon</span>
+            </a>
+            <nav class="nav">
+                <button class="nav-btn active" id="view-calendar-btn">
+                    <i class="far fa-calendar"></i>
+                    <span>Kalender</span>
+                </button>
+                <button class="nav-btn" id="view-profile-btn">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </button>
+                <button class="nav-btn" id="admin-login-btn">
+                    <i class="fas fa-lock"></i>
+                    <span>Friseur Login</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main hidden" id="app-main">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" data-tab="calendar">Kalender</div>
+                <div class="tab" data-tab="profile">Mein Profil</div>
+            </div>
+            
+            <!-- Calendar View -->
+            <section class="tab-content active" id="calendar-view">
+                <div class="calendar-header">
+                    <h2 class="calendar-title">Terminkalender</h2>
+                    <div class="calendar-nav">
+                        <button class="calendar-nav-btn" id="prev-month">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="month-year" id="current-month-year">Juni 2025</div>
+                        <button class="calendar-nav-btn" id="next-month">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="calendar-grid" id="calendar">
+                    <!-- Dynamically generated -->
+                </div>
+            </section>
+            
+            <!-- Profile View -->
+            <section class="tab-content" id="profile-view">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="customer-avatar">JD</div>
+                        <div class="profile-info">
+                            <h3 id="customer-name-display">John Doe</h3>
+                            <p id="customer-email-display">john.doe@example.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="profile-phone" class="input-label">Telefonnummer</label>
+                        <input type="tel" id="profile-phone" class="input-field" placeholder="Ihre Telefonnummer">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="profile-password" class="input-label">Neues Passwort</label>
+                        <input type="password" id="profile-password" class="input-field" placeholder="Leer lassen um nicht zu ändern">
+                    </div>
+                    
+                    <button class="btn mt-20" id="save-profile-btn">Profil speichern</button>
+                </div>
+                
+                <h3 style="margin-bottom: 15px;">Meine Buchungen</h3>
+                <div class="table-responsive">
+                    <table class="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Uhrzeit</th>
+                                <th>Service</th>
+                                <th>Status</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-bookings-table">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Login Screen (initial view) -->
+        <section id="login-view">
+            <div class="login-card fade-in">
+                <h1 class="login-title">Heiko's Friseursalon</h1>
+                <p class="login-subtitle">Private Friseur-Terminbuchung</p>
+                
+                <div class="input-group">
+                    <label for="client-email" class="input-label">Email</label>
+                    <input type="email" id="client-email" class="input-field" placeholder="Ihre Email-Adresse">
+                </div>
+                
+                <div class="input-group">
+                    <label for="client-password" class="input-label">Passwort</label>
+                    <input type="password" id="client-password" class="input-field" placeholder="Passwort eingeben">
+                    <p class="error-msg" id="client-error">Falsche Anmeldedaten. Bitte versuchen Sie es erneut.</p>
+                </div>
+                
+                <button class="btn" id="client-login-btn">Einloggen</button>
+                
+                <p class="text-center mt-20">Neu hier? <a href="#" id="show-register">Konto erstellen</a></p>
+                <p class="text-center mt-10">Sie sind der Friseur? <a href="#" id="show-admin-login">Friseur-Login</a></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Admin Container -->
+    <div class="admin-container" id="admin-container">
+        <div class="admin-sidebar">
+            <h2 style="margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-crown"></i> Admin Panel
+            </h2>
+            
+            <div class="admin-menu-item active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </div>
+            
+            <div class="admin-menu-item" data-section="calendar">
+                <i class="far fa-calendar"></i> Kalender
+            </div>
+            
+            <div class="admin-menu-item" data-section="bookings">
+                <i class="fas fa-list"></i> Buchungen
+            </div>
+            
+            <div class="admin-menu-item" data-section="customers">
+                <i class="fas fa-users"></i> Kunden
+            </div>
+            
+            <div class="admin-menu-item" data-section="timeslots">
+                <i class="fas fa-clock"></i> Terminverwaltung
+            </div>
+            
+            <div class="admin-menu-item" data-section="settings">
+                <i class="fas fa-cog"></i> Einstellungen
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="admin-logout-btn" style="width: 100%;">
+                    <i class="fas fa-sign-out-alt"></i> Ausloggen
+                </button>
+            </div>
+        </div>
+        
+        <div class="admin-content">
+            <!-- Dashboard Section -->
+            <div class="admin-section active" id="dashboard-section">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="today-bookings">0</div>
+                        <div class="stat-label">Heutige Termine</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value" id="waitlist-count">0</div>
+                        <div class="stat-label">Warteliste</div>
+                    </div>
+                </div>
+                
+                <div style="background-color: white; border-radius: 8px; padding: 20px; margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px;">Kommende Termine</h3>
+                    <div id="upcoming-bookings">
+                        <!-- Wird dynamisch befüllt -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Calendar Section -->
+            <div class="admin-section" id="calendar-section">
+                <h2 style="margin-bottom: 20px;"><i class="far fa-calendar"></i> Kalender</h2>
+                <div class="calendar-header">
+                    <h2 class="calendar-title">Terminkalender</h2>
+                    <div class="calendar-nav">
+                        <button class="calendar-nav-btn" id="admin-prev-month">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="month-year" id="admin-current-month-year">Juni 2025</div>
+                        <button class="calendar-nav-btn" id="admin-next-month">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="admin-calendar">
+                    <!-- Dynamically generated -->
+                </div>
+            </div>
+            
+            <!-- Bookings Section -->
+            <div class="admin-section" id="bookings-section">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-list"></i> Alle Buchungen</h2>
+                <div class="table-responsive">
+                    <table class="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Uhrzeit</th>
+                                <th>Kunde</th>
+                                <th>Service</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-bookings-table-body">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Customers Section -->
+            <div class="admin-section" id="customers-section">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-users"></i> Kundenverwaltung</h2>
+                <div class="table-responsive">
+                    <table class="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Telefon</th>
+                                <th>Letzter Besuch</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-list">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Time Slot Management Section -->
+            <div class="admin-section" id="timeslots-section">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-clock"></i> Terminverwaltung</h2>
+                <div class="time-slot-form">
+                    <h3>Verfügbare Zeitslots hinzufügen</h3>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="slot-date" class="input-label">Datum</label>
+                            <input type="date" id="slot-date" class="input-field">
+                        </div>
+                        <div class="input-group">
+                            <label for="slot-duration" class="input-label">Terminlänge (Minuten)</label>
+                            <input type="number" id="slot-duration" class="input-field" value="30" min="15" max="120">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Verfügbare Zeiten</label>
+                        <div class="time-slots-grid" id="time-slots-grid">
+                            <!-- Time slots will be generated here -->
+                        </div>
+                    </div>
+                    <button class="btn" id="add-slots-btn">
+                        <i class="fas fa-plus"></i> Zeitslots speichern
+                    </button>
+                </div>
+                
+                <h3 style="margin-top: 30px;">Geplante Termine</h3>
+                <div class="table-responsive">
+                    <table class="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Zeit</th>
+                                <th>Dauer</th>
+                                <th>Status</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduled-slots">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div class="admin-section" id="settings-section">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-cog"></i> Einstellungen</h2>
+                <div class="admin-form">
+                    <h3 style="margin-bottom: 15px;">Öffnungszeiten</h3>
+                    <div id="business-hours-form">
+                        <!-- Wird dynamisch befüllt -->
+                    </div>
+                    
+                    <h3 style="margin-bottom: 15px; margin-top: 30px;">Benachrichtigungen</h3>
+                    <div class="input-group">
+                        <label class="input-label">Erinnerungen senden</label>
+                        <select id="reminder-time" class="input-field">
+                            <option value="24">24 Stunden vor Termin</option>
+                            <option value="48">48 Stunden vor Termin</option>
+                            <option value="both">24 und 48 Stunden vor Termin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Erinnerungsmethode</label>
+                        <select id="reminder-method" class="input-field">
+                            <option value="email">Email</option>
+                            <option value="sms">SMS</option>
+                            <option value="both">Email und SMS</option>
+                        </select>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 15px; margin-top: 30px;">Passwörter</h3>
+                    <div class="input-group">
+                        <label for="new-client-password" class="input-label">Neues Kunden-Passwort</label>
+                        <input type="password" id="new-client-password" class="input-field" placeholder="Neues Passwort">
+                    </div>
+                    <div class="input-group">
+                        <label for="new-admin-password" class="input-label">Neues Friseur-Passwort</label>
+                        <input type="password" id="new-admin-password" class="input-field" placeholder="Neues Admin-Passwort">
+                    </div>
+                    
+                    <button class="btn" id="save-settings-btn" style="margin-top: 20px;">
+                        <i class="fas fa-save"></i> Einstellungen speichern
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Booking Modal -->
+    <div class="modal" id="booking-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Termin buchen</h3>
+                <button class="modal-close" id="close-booking-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="selected-slot-text">Freitag, 10. Juni 2025, 15:00 - 15:45 Uhr</p>
+                
+                <div class="input-group mt-20">
+                    <label for="customer-name" class="input-label">Ihr Name</label>
+                    <input type="text" id="customer-name" class="input-field" placeholder="Vor- und Nachname">
+                </div>
+                
+                <div class="input-group">
+                    <label for="customer-phone" class="input-label">Telefonnummer (optional)</label>
+                    <input type="tel" id="customer-phone" class="input-field" placeholder="Für Rückfragen">
+                </div>
+                
+                <div class="input-group">
+                    <label for="customer-email" class="input-label">Email (optional für Erinnerungen)</label>
+                    <input type="email" id="customer-email" class="input-field" placeholder="ihre@email.de">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-booking">Abbrechen</button>
+                <button class="btn" id="confirm-booking">Termin buchen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="payment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Bezahlung</h3>
+                <button class="modal-close" id="close-payment-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Bitte wählen Sie Ihre Zahlungsmethode für den Haarschnitt (€15,00):</p>
+                
+                <div class="mt-20">
+                    <button class="btn" id="cash-payment" style="margin-bottom: 10px;">
+                        <i class="fas fa-money-bill-wave"></i> Barzahlung vor Ort
+                    </button>
+                    <button class="btn" id="paypal-payment" style="background-color: #0070ba; margin-bottom: 10px;">
+                        <i class="fab fa-paypal"></i> Mit PayPal bezahlen
+                    </button>
+                    <button class="btn" id="stripe-payment" style="background-color: #635bff;">
+                        <i class="fas fa-credit-card"></i> Kreditkarte (Stripe)
+                    </button>
+                </div>
+                
+                <div id="payment-success" class="hidden mt-20">
+                    <div style="text-align: center; color: var(--success); font-size: 3rem; margin: 20px 0;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="text-center">Bezahlung erfolgreich!</h3>
+                    <p class="text-center" id="booking-confirmation-text"></p>
+                    <div class="text-center mt-20">
+                        <button class="btn btn-secondary" id="export-ical">
+                            <i class="fas fa-calendar-plus"></i> Zum Kalender hinzufügen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Konto erstellen</h3>
+                <button class="modal-close" id="close-register-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="register-name" class="input-label">Vor- und Nachname</label>
+                    <input type="text" id="register-name" class="input-field" placeholder="Max Mustermann">
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-email" class="input-label">Email</label>
+                    <input type="email" id="register-email" class="input-field" placeholder="ihre@email.de">
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-phone" class="input-label">Telefonnummer (optional)</label>
+                    <input type="tel" id="register-phone" class="input-field" placeholder="Für Rückfragen">
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-password" class="input-label">Passwort</label>
+                    <input type="password" id="register-password" class="input-field" placeholder="Mindestens 8 Zeichen">
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-confirm" class="input-label">Passwort bestätigen</label>
+                    <input type="password" id="register-confirm" class="input-field" placeholder="Passwort wiederholen">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-register">Abbrechen</button>
+                <button class="btn" id="confirm-register">Konto erstellen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="admin-login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Friseur Login</h3>
+                <button class="modal-close" id="close-admin-login-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="admin-email" class="input-label">Email</label>
+                    <input type="email" id="admin-email" class="input-field" placeholder="admin@beispiel.de">
+                </div>
+                
+                <div class="input-group">
+                    <label for="admin-password" class="input-label">Passwort</label>
+                    <input type="password" id="admin-password" class="input-field" placeholder="Admin-Passwort eingeben">
+                    <p class="error-msg" id="admin-error">Falsches Passwort. Nur für autorisierte Friseure.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-admin-login">Abbrechen</button>
+                <button class="btn" id="confirm-admin-login">Einloggen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Globale Variablen
+    let currentUser = null;
+    let isAdmin = false;
+    let bookings = [];
+    let staffMembers = [];
+    let timeSlots = [];
+    let customers = [
+        { id: 1, name: 'Admin', email: 'admin@example.com', phone: '0123456789', password: 'admin123', isAdmin: true },
+        { id: 2, name: 'Max Mustermann', email: 'max@example.com', phone: '0987654321', password: 'password123', isAdmin: false }
+    ];
+    let businessHours = {
+        monday:    { open: '09:00', close: '18:00' },
+        tuesday:   { open: '09:00', close: '18:00' },
+        wednesday: { open: '09:00', close: '18:00' },
+        thursday:  { open: '09:00', close: '18:00' },
+        friday:    { open: '09:00', close: '18:00' },
+        saturday:  { open: '10:00', close: '16:00' },
+        sunday:    { open: '',      close: ''      }
+    };
+    let currentMonth = new Date().getMonth();
+    let currentYear  = new Date().getFullYear();
+    let settings     = {
+        reminderTime:   '24',
+        reminderMethod: 'email',
+        paymentMethods: { paypal: true, stripe: true, cash: true }
+    };
+
+    // DOM-Elemente
+    const elements = {
+        clientContainer:      document.getElementById('client-container'),
+        appHeader:            document.getElementById('app-header'),
+        appMain:              document.getElementById('app-main'),
+        loginView:            document.getElementById('login-view'),
+        clientEmail:          document.getElementById('client-email'),
+        clientPassword:       document.getElementById('client-password'),
+        clientError:          document.getElementById('client-error'),
+        clientLoginBtn:       document.getElementById('client-login-btn'),
+        showRegister:         document.getElementById('show-register'),
+        showAdminLogin:       document.getElementById('show-admin-login'),
+        viewCalendarBtn:      document.getElementById('view-calendar-btn'),
+        viewProfileBtn:       document.getElementById('view-profile-btn'),
+        adminLoginBtn:        document.getElementById('admin-login-btn'),
+        currentMonthYear:     document.getElementById('current-month-year'),
+        calendar:             document.getElementById('calendar'),
+        prevMonth:            document.getElementById('prev-month'),
+        nextMonth:            document.getElementById('next-month'),
+        customerNameDisplay:  document.getElementById('customer-name-display'),
+        customerEmailDisplay: document.getElementById('customer-email-display'),
+        customerAvatar:       document.getElementById('customer-avatar'),
+        profilePhone:         document.getElementById('profile-phone'),
+        profilePassword:      document.getElementById('profile-password'),
+        saveProfileBtn:       document.getElementById('save-profile-btn'),
+        customerBookingsTable:document.getElementById('customer-bookings-table'),
+
+        adminContainer:       document.getElementById('admin-container'),
+        adminLogoutBtn:       document.getElementById('admin-logout-btn'),
+        adminCurrentMonthYear:document.getElementById('admin-current-month-year'),
+        adminCalendar:        document.getElementById('admin-calendar'),
+        adminPrevMonth:       document.getElementById('admin-prev-month'),
+        adminNextMonth:       document.getElementById('admin-next-month'),
+        adminBookingsTableBody:document.getElementById('admin-bookings-table-body'),
+        customersList:        document.getElementById('customers-list'),
+        todayBookings:        document.getElementById('today-bookings'),
+        weekRevenue:          document.getElementById('week-revenue'),
+        avgRating:            document.getElementById('avg-rating'),
+        waitlistCount:        document.getElementById('waitlist-count'),
+        upcomingBookings:     document.getElementById('upcoming-bookings'),
+        businessHoursForm:    document.getElementById('business-hours-form'),
+        reminderTime:         document.getElementById('reminder-time'),
+        reminderMethod:       document.getElementById('reminder-method'),
+        newClientPassword:    document.getElementById('new-client-password'),
+        newAdminPassword:     document.getElementById('new-admin-password'),
+        enablePaypal:         document.getElementById('enable-paypal'),
+        enableStripe:         document.getElementById('enable-stripe'),
+        enableCash:           document.getElementById('enable-cash'),
+        saveSettingsBtn:      document.getElementById('save-settings-btn'),
+        slotDate:             document.getElementById('slot-date'),
+        slotDuration:         document.getElementById('slot-duration'),
+        timeSlotsGrid:        document.getElementById('time-slots-grid'),
+        addSlotsBtn:          document.getElementById('add-slots-btn'),
+        scheduledSlots:       document.getElementById('scheduled-slots'),
+
+        bookingModal:         document.getElementById('booking-modal'),
+        closeBookingModal:    document.getElementById('close-booking-modal'),
+        selectedSlotText:     document.getElementById('selected-slot-text'),
+        customerName:         document.getElementById('customer-name'),
+        customerPhone:        document.getElementById('customer-phone'),
+        customerEmail:        document.getElementById('customer-email'),
+        bookingStaff:         document.getElementById('booking-staff'),
+        cancelBooking:        document.getElementById('cancel-booking'),
+        confirmBooking:       document.getElementById('confirm-booking'),
+        paymentModal:         document.getElementById('payment-modal'),
+        closePaymentModal:    document.getElementById('close-payment-modal'),
+        cashPayment:          document.getElementById('cash-payment'),
+        paypalPayment:        document.getElementById('paypal-payment'),
+        stripePayment:        document.getElementById('stripe-payment'),
+        paymentSuccess:       document.getElementById('payment-success'),
+        bookingConfirmationText: document.getElementById('booking-confirmation-text'),
+        exportIcal:           document.getElementById('export-ical'),
+        registerModal:        document.getElementById('register-modal'),
+        closeRegisterModal:   document.getElementById('close-register-modal'),
+        registerName:         document.getElementById('register-name'),
+        registerEmail:        document.getElementById('register-email'),
+        registerPhone:        document.getElementById('register-phone'),
+        registerPassword:     document.getElementById('register-password'),
+        registerConfirm:      document.getElementById('register-confirm'),
+        cancelRegister:       document.getElementById('cancel-register'),
+        confirmRegister:      document.getElementById('confirm-register'),
+        adminLoginModal:      document.getElementById('admin-login-modal'),
+        closeAdminLoginModal: document.getElementById('close-admin-login-modal'),
+        adminEmail:           document.getElementById('admin-email'),
+        adminPassword:        document.getElementById('admin-password'),
+        adminError:           document.getElementById('admin-error'),
+        cancelAdminLogin:     document.getElementById('cancel-admin-login'),
+        confirmAdminLogin:    document.getElementById('confirm-admin-login')
+    };
+
+    // Initialisierung
+    document.addEventListener('DOMContentLoaded', () => {
+        // Client‐Events
+        elements.clientLoginBtn.addEventListener('click', handleClientLogin);
+        elements.showRegister.addEventListener('click', showRegisterModal);
+        elements.showAdminLogin.addEventListener('click', showAdminLoginModal);
+        elements.viewCalendarBtn.addEventListener('click', () => switchTab('calendar'));
+        elements.viewProfileBtn.addEventListener('click', () => switchTab('profile'));
+        elements.adminLoginBtn.addEventListener('click', showAdminLoginModal);
+        elements.prevMonth.addEventListener('click', () => changeMonth(-1));
+        elements.nextMonth.addEventListener('click', () => changeMonth(1));
+        elements.saveProfileBtn.addEventListener('click', saveProfile);
+
+        // Admin‐Events
+        elements.adminLogoutBtn.addEventListener('click', handleAdminLogout);
+        elements.adminPrevMonth.addEventListener('click', () => changeMonth(-1, true));
+        elements.adminNextMonth.addEventListener('click', () => changeMonth(1, true));
+        elements.saveSettingsBtn.addEventListener('click', saveSettings);
+        elements.addSlotsBtn.addEventListener('click', addTimeSlots);
+        elements.slotDate.addEventListener('change', generateTimeSlots);
+        elements.slotDuration.addEventListener('change', generateTimeSlots);
+
+        // Modal‐Events
+        elements.closeBookingModal.addEventListener('click', () => elements.bookingModal.classList.remove('active'));
+        elements.cancelBooking.addEventListener('click', () => elements.bookingModal.classList.remove('active'));
+        elements.confirmBooking.addEventListener('click', confirmBooking);
+        elements.closePaymentModal.addEventListener('click', () => elements.paymentModal.classList.remove('active'));
+        elements.cashPayment.addEventListener('click', () => processPayment('cash'));
+        elements.paypalPayment.addEventListener('click', () => processPayment('paypal'));
+        elements.stripePayment.addEventListener('click', showStripeModal);
+        elements.closeRegisterModal.addEventListener('click', () => elements.registerModal.classList.remove('active'));
+        elements.cancelRegister.addEventListener('click', () => elements.registerModal.classList.remove('active'));
+        elements.confirmRegister.addEventListener('click', handleRegister);
+        elements.closeAdminLoginModal.addEventListener('click', () => elements.adminLoginModal.classList.remove('active'));
+        elements.cancelAdminLogin.addEventListener('click', () => elements.adminLoginModal.classList.remove('active'));
+        elements.confirmAdminLogin.addEventListener('click', handleAdminLogin);
+        elements.exportIcal.addEventListener('click', exportToICal);
+
+        // Admin‐Navigation
+        document.querySelectorAll('.admin-menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.getAttribute('data-section');
+                switchAdminSection(section);
+            });
+        });
+
+        // Testdaten und Initial‐Renders
+        loadTestData();
+        updateCalendar();
+        updateCustomersList();
+        updateAdminCalendar();
+
+        // Heute für Slot‐Erstellung
+        const today = new Date();
+        elements.slotDate.valueAsDate = today;
+        generateTimeSlots();
+    });
+
+    // Test‐Daten laden
+    function loadTestData() {
+        currentUser = customers[1];
+        const today    = new Date();
+        const tomorrow = new Date(); tomorrow.setDate(today.getDate()+1);
+        timeSlots = [
+            { id:1, date: today.toISOString().split('T')[0], time:'10:00', duration:45, status:'available' },
+            { id:2, date: today.toISOString().split('T')[0], time:'11:00', duration:45, status:'available' },
+            { id:3, date: tomorrow.toISOString().split('T')[0], time:'14:00', duration:30, status:'available' }
+        ];
+        bookings = [
+            {
+                id:1, customerId:2,
+                date: today.toISOString().split('T')[0],
+                time:'10:00', duration:45,
+                customerName:'Max Mustermann',
+                customerEmail:'max@example.com',
+                customerPhone:'0987654321',
+                paymentMethod:'cash', paymentStatus:'paid', status:'confirmed'
+            }
+        ];
+    }
+
+    // ——— Login / Registrierung ———
+    function handleClientLogin() {
+        const email = elements.clientEmail.value;
+        const pass  = elements.clientPassword.value;
+        const user  = customers.find(u => u.email===email && u.password===pass);
+        if(user){
+            currentUser = user;
+            elements.clientError.style.display='none';
+            elements.loginView.classList.add('hidden');
+            elements.appHeader.classList.remove('hidden');
+            elements.appMain.classList.remove('hidden');
+            updateProfile();
+            updateCustomerBookings();
+        } else elements.clientError.style.display='block';
+    }
+
+    function handleAdminLogin(){
+        const email = elements.adminEmail.value;
+        const pass  = elements.adminPassword.value;
+        const user  = customers.find(u => u.email===email && u.password===pass && u.isAdmin);
+        if(user){
+            isAdmin = true;
+            elements.adminError.style.display='none';
+            elements.clientContainer.classList.add('hidden');
+            elements.adminContainer.style.display='grid';
+            elements.adminLoginModal.classList.remove('active');
+            updateAdminDashboard();
+            updateScheduledSlots();
+        } else elements.adminError.style.display='block';
+    }
+
+    function handleAdminLogout(){
+        isAdmin=false;
+        elements.adminContainer.style.display='none';
+        elements.clientContainer.classList.remove('hidden');
+        elements.loginView.classList.remove('hidden');
+        elements.appHeader.classList.add('hidden');
+        elements.appMain.classList.add('hidden');
+        elements.clientEmail.value=''; elements.clientPassword.value='';
+        elements.adminEmail.value=''; elements.adminPassword.value='';
+    }
+
+    function handleRegister(){
+        const name    = elements.registerName.value;
+        const email   = elements.registerEmail.value;
+        const phone   = elements.registerPhone.value;
+        const pass    = elements.registerPassword.value;
+        const confirm = elements.registerConfirm.value;
+        if(pass!==confirm){ alert('Passwörter stimmen nicht überein!'); return; }
+        const newUser = { id:customers.length+1, name, email, phone, password:pass, isAdmin:false };
+        customers.push(newUser);
+        currentUser=newUser;
+        alert('Registrierung erfolgreich! Sie sind jetzt eingeloggt.');
+        elements.registerModal.classList.remove('active');
+        elements.loginView.classList.add('hidden');
+        elements.appHeader.classList.remove('hidden');
+        elements.appMain.classList.remove('hidden');
+        updateProfile();
+        updateCustomersList();
+    }
+
+    function showRegisterModal(){ elements.registerModal.classList.add('active'); }
+    function showAdminLoginModal(){ elements.adminLoginModal.classList.add('active'); }
+
+    // ——— Profil / Buchungen ———
+    function updateProfile(){
+        if(!currentUser) return;
+        elements.customerNameDisplay.textContent  = currentUser.name;
+        elements.customerEmailDisplay.textContent = currentUser.email;
+        elements.customerAvatar.textContent       = getInitials(currentUser.name);
+        elements.profilePhone.value               = currentUser.phone||'';
+    }
+
+    function saveProfile(){
+        if(!currentUser) return;
+        currentUser.phone = elements.profilePhone.value;
+        if(elements.profilePassword.value){
+            currentUser.password = elements.profilePassword.value;
+            elements.profilePassword.value = '';
+        }
+        alert('Profil erfolgreich gespeichert!');
+    }
+
+    function updateCustomerBookings(){
+        if(!currentUser) return;
+        const custB = bookings.filter(b=>b.customerId===currentUser.id);
+        let html='';
+        custB.forEach(b=>{
+            html += `<tr>
+                        <td>${formatDateForDisplay(b.date)}</td>
+                        <td>${b.time} Uhr</td>
+                        <td>${b.service || 'Haarschnitt'}</td>
+                        <td>${b.status==='confirmed'?'Bestätigt':'Ausstehend'}</td>
+                        <td>
+                          <button class="btn btn-secondary btn-small" onclick="cancelCustomerBooking(${b.id})">
+                            <i class="fas fa-times"></i> Stornieren
+                          </button>
+                        </td>
+                     </tr>`;
+        });
+        elements.customerBookingsTable.innerHTML = html||'<tr><td colspan="5">Keine Buchungen gefunden</td></tr>';
+    }
+
+    function cancelCustomerBooking(id){
+        if(!confirm('Möchten Sie diesen Termin wirklich stornieren?')) return;
+        const idx = bookings.findIndex(b=>b.id===id);
+        if(idx!==-1){ bookings[idx].status='cancelled'; updateCustomerBookings(); updateCalendar(); if(isAdmin) updateAdminDashboard(); alert('Termin wurde storniert.'); }
+    }
+
+    // ——— Buchung & Bezahlung ———
+    function switchTab(tab){
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        if(tab==='calendar'){
+            document.querySelector('.tab[data-tab="calendar"]').classList.add('active');
+            document.getElementById('calendar-view').classList.add('active');
+            elements.viewCalendarBtn.classList.add('active');
+            elements.viewProfileBtn.classList.remove('active');
+        } else {
+            document.querySelector('.tab[data-tab="profile"]').classList.add('active');
+            document.getElementById('profile-view').classList.add('active');
+            elements.viewProfileBtn.classList.add('active');
+            elements.viewCalendarBtn.classList.remove('active');
+        }
+    }
+
+    function switchAdminSection(section){
+        document.querySelectorAll('.admin-menu-item').forEach(i=>i.classList.remove('active'));
+        document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+        document.querySelector(`.admin-menu-item[data-section="${section}"]`).classList.add('active');
+        document.getElementById(`${section}-section`).classList.add('active');
+        if(section==='dashboard') updateAdminDashboard();
+        if(section==='bookings')  updateAdminBookings();
+        if(section==='customers') updateCustomersList();
+        if(section==='timeslots') updateScheduledSlots();
+        if(section==='calendar')  updateAdminCalendar();
+    }
+
+    function updateCalendar(){
+        const firstDay    = new Date(currentYear, currentMonth, 1);
+        const lastDay     = new Date(currentYear, currentMonth+1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startDay    = firstDay.getDay();
+        elements.currentMonthYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+        let html = '';
+        ['So','Mo','Di','Mi','Do','Fr','Sa'].forEach(d=>html+=`<div class="calendar-day-header">${d}</div>`);
+        for(let i=0;i<startDay;i++) html+=`<div class="calendar-day day-outside"></div>`;
+        for(let i=1;i<=daysInMonth;i++){
+            const date = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+            const dow   = new Date(currentYear, currentMonth, i).getDay();
+            const isOpen = dow!==0 && (dow!==6 || businessHours.saturday.open!=='');
+            const daySlots   = timeSlots.filter(s=>s.date===date);
+            const dayBookings= bookings.filter(b=>b.date===date);
+            html+=`<div class="calendar-day ${!isOpen?'day-outside':''}">
+                      <div class="day-number">${i}</div>
+                      <div class="day-content">`;
+            if(isOpen){
+                daySlots.forEach(slot=>{
+                    const booked = dayBookings.some(b=>b.time===slot.time && b.status!=='cancelled');
+                    if(slot.status==='available' && !booked){
+                        html+=`<div class="slot slot-available" data-date="${date}" data-time="${slot.time}" data-duration="${slot.duration}">
+                                  <span class="slot-time">${slot.time}</span>
+                                  <span class="slot-customer">Verfügbar (${slot.duration} min)</span>
+                               </div>`;
+                    } else if(booked){
+                        const b = dayBookings.find(bk=>bk.time===slot.time);
+                        html+=`<div class="slot slot-booked">
+                                  <span class="slot-time">${slot.time}</span>
+                                  <span class="slot-customer">${b.customerName}</span>
+                               </div>`;
+                    }
+                });
+            }
+            html+=`    </div>
+                    </div>`;
+        }
+        elements.calendar.innerHTML = html;
+        document.querySelectorAll('.slot-available').forEach(slot=>{
+            slot.addEventListener('click',()=>{
+                const date     = slot.getAttribute('data-date');
+                const time     = slot.getAttribute('data-time');
+                const duration = slot.getAttribute('data-duration');
+                const dt       = new Date(`${date}T${time}`);
+                elements.selectedSlotText.textContent = `${getWeekdayName(dt.getDay())}, ${dt.getDate()}. ${getMonthName(dt.getMonth())} ${dt.getFullYear()}, ${time} Uhr (${duration} min)`;
+                elements.bookingModal.classList.add('active');
+                if(currentUser){
+                    elements.customerName.value  = currentUser.name;
+                    elements.customerEmail.value = currentUser.email;
+                    elements.customerPhone.value = currentUser.phone||'';
+                }
+            });
+        });
+    }
+
+    function confirmBooking(){
+        const txt = elements.selectedSlotText.textContent;
+        const m   = txt.match(/(\d+)\. (\w+) (\d+), (\d+:\d+) Uhr \((\d+) min\)/);
+        if(!m){ alert('Ungültige Terminauswahl!'); return; }
+        const [_, day, monthName, year, time, duration] = m;
+        const date = `${year}-${String(getMonthIndex(monthName)+1).padStart(2,'0')}-${day.padStart(2,'0')}`;
+        const newB = {
+            id: bookings.length+1,
+            customerId: currentUser?currentUser.id:null,
+            date, time,
+            duration: parseInt(duration),
+            customerName: elements.customerName.value,
+            customerEmail: elements.customerEmail.value,
+            customerPhone: elements.customerPhone.value,
+            paymentMethod:'',
+            paymentStatus:'pending',
+            status:'pending',
+            service: 'Haarschnitt'
+        };
+        bookings.push(newB);
+        elements.bookingModal.classList.remove('active');
+        elements.paymentModal.classList.add('active');
+        elements.paymentSuccess.classList.add('hidden');
+        elements.customerName.value = '';
+        elements.customerPhone.value = '';
+        elements.customerEmail.value = '';
+    }
+
+    function processPayment(method){
+        const pending = bookings[bookings.length-1];
+        pending.paymentMethod = method;
+        pending.paymentStatus = 'paid';
+        pending.status        = 'confirmed';
+        elements.paymentSuccess.classList.remove('hidden');
+        elements.bookingConfirmationText.textContent =
+            `Ihr Termin am ${pending.date} um ${pending.time} Uhr wurde erfolgreich gebucht.`;
+        updateCalendar();
+        updateCustomerBookings();
+        if(isAdmin) updateAdminDashboard();
+    }
+    function showStripeModal(){ alert('Stripe-Zahlung wird hier implementiert'); }
+
+    // ——— Admin: Kundenverwaltung ———
+    function updateCustomersList(){
+        if(!elements.customersList) return;
+        let html='';
+        customers.forEach(c=>{
+            const last = bookings
+                .filter(b=>b.customerId===c.id && b.status==='confirmed')
+                .map(b=>b.date)
+                .sort().pop()||'-';
+            html+=`
+            <tr>
+              <td>${c.name}</td>
+              <td>${c.email}</td>
+              <td>${c.phone||'-'}</td>
+              <td>${ last!=='-'?formatDateForDisplay(last):'-' }</td>
+            </tr>`;
+        });
+        elements.customersList.innerHTML = html||'<tr><td colspan="4">Keine Kunden gefunden</td></tr>';
+    }
+
+    // ——— Admin: Kalender ———
+    function updateAdminCalendar(){
+        const firstDay    = new Date(currentYear, currentMonth, 1);
+        const lastDay     = new Date(currentYear, currentMonth+1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startDay    = firstDay.getDay();
+        let html='';
+        ['So','Mo','Di','Mi','Do','Fr','Sa'].forEach(d=>html+=`<div class="calendar-day-header">${d}</div>`);
+        for(let i=0;i<startDay;i++) html+=`<div class="calendar-day day-outside"></div>`;
+        for(let i=1;i<=daysInMonth;i++){
+            html+=`<div class="calendar-day"><div class="day-number">${i}</div></div>`;
+        }
+        elements.adminCalendar.innerHTML = html;
+        elements.adminCurrentMonthYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+    }
+
+    // ——— Monat wechseln ———
+    function changeMonth(offset, isAdmin=false){
+        currentMonth += offset;
+        if(currentMonth>11){ currentMonth=0; currentYear++; }
+        if(currentMonth<0){ currentMonth=11; currentYear--; }
+        if(isAdmin) updateAdminCalendar();
+        else        updateCalendar();
+    }
+
+    // ——— Admin: Dashboard & Buchungen ———
+    function updateAdminDashboard(){
+        const today = new Date().toISOString().split('T')[0];
+        const todayCount = bookings.filter(b=>b.date===today && b.status==='confirmed').length;
+        elements.todayBookings.textContent = todayCount;
+        elements.waitlistCount.textContent = '0';
+        
+        const upcoming = bookings
+            .filter(b=>b.date>=today && b.status==='confirmed')
+            .sort((a,b)=>new Date(a.date)-new Date(b.date))
+            .slice(0,5);
+        let html='';
+        upcoming.forEach(b=>{
+            html+=`
+            <div style="padding:10px;border-bottom:1px solid var(--border);">
+              <strong>${formatDateForDisplay(b.date)} ${b.time}</strong>
+              <div>${b.customerName}</div>
+            </div>`;
+        });
+        elements.upcomingBookings.innerHTML = html||'<p>Keine kommenden Termine</p>';
+    }
+
+    function updateAdminBookings(){
+        let html='';
+        bookings.forEach(b=>{
+            html+=`
+            <tr>
+              <td>${formatDateForDisplay(b.date)}</td>
+              <td>${b.time} Uhr</td>
+              <td>${b.customerName}</td>
+              <td>${b.service || 'Haarschnitt'}</td>
+              <td>
+                <span class="status-badge ${b.status==='confirmed'?'confirmed':'pending'}">
+                  ${b.status==='confirmed'?'Bestätigt':'Ausstehend'}
+                </span>
+              </td>
+            </tr>`;
+        });
+        elements.adminBookingsTableBody.innerHTML = html||'<tr><td colspan="5">Keine Buchungen gefunden</td></tr>';
+    }
+
+    // ——— Slot‐Management ———
+    function generateTimeSlots(){
+        const date     = elements.slotDate.value;
+        const duration = parseInt(elements.slotDuration.value);
+        if(!date) return;
+        const dow = new Date(date).getDay();
+        const open = (dow===6?businessHours.saturday:businessHours.monday).open;
+        const close= (dow===6?businessHours.saturday:businessHours.monday).close;
+        if(!open||!close){
+            elements.timeSlotsGrid.innerHTML = '<p>An diesem Tag geschlossen</p>';
+            return;
+        }
+        const [sh,sm]=open.split(':').map(n=>parseInt(n));
+        const [eh,em]=close.split(':').map(n=>parseInt(n));
+        let startTime = new Date(0,0,0,sh,sm);
+        const endTime = new Date(0,0,0,eh,em);
+        let html='';
+        while(startTime<endTime){
+            const ts = `${String(startTime.getHours()).padStart(2,'0')}:${String(startTime.getMinutes()).padStart(2,'0')}`;
+            const exists = timeSlots.some(s=>s.date===date && s.time===ts);
+            const booked = bookings.some(b=>b.date===date && b.time===ts && b.status!=='cancelled');
+            html+=`<div class="time-slot ${exists?'selected':''} ${booked?'booked':''}" data-time="${ts}"
+                         onclick="${booked?'':'selectTimeSlot(this)'}">${ts}</div>`;
+            startTime = new Date(startTime.getTime() + duration*60000);
+        }
+        elements.timeSlotsGrid.innerHTML = html;
+    }
+
+    function selectTimeSlot(el){
+        document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function addTimeSlots(){
+        const date = elements.slotDate.value;
+        const selected = document.querySelectorAll('.time-slot.selected');
+        if(!date){ alert('Bitte wählen Sie ein Datum aus'); return; }
+        if(selected.length===0){ alert('Bitte wählen Sie mindestens einen Zeitslot aus'); return; }
+        selected.forEach(el=>{
+            const time = el.getAttribute('data-time');
+            if(!timeSlots.some(s=>s.date===date && s.time===time)){
+                timeSlots.push({ id:timeSlots.length+1, date, time, duration:parseInt(elements.slotDuration.value), status:'available' });
+            }
+        });
+        alert(`${selected.length} Zeitslot(s) hinzugefügt`);
+        updateScheduledSlots();
+        updateCalendar();
+    }
+
+    function updateScheduledSlots(){
+        let html='';
+        timeSlots.forEach(s=>{
+            const booked = bookings.some(b=>b.date===s.date && b.time===s.time && b.status!=='cancelled');
+            html+=`
+            <tr>
+              <td>${formatDateForDisplay(s.date)}</td>
+              <td>${s.time}</td>
+              <td>${s.duration} min</td>
+              <td>${booked?'Gebucht':'Verfügbar'}</td>
+              <td>
+                <button class="btn btn-secondary btn-small" onclick="deleteTimeSlot(${s.id})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>`;
+        });
+        elements.scheduledSlots.innerHTML = html||'<tr><td colspan="5">Keine Zeitslots geplant</td></tr>';
+    }
+
+    function deleteTimeSlot(id){
+        if(!confirm('Möchten Sie diesen Zeitslot wirklich löschen?')) return;
+        const idx = timeSlots.findIndex(s=>s.id===id);
+        if(idx!==-1){
+            timeSlots.splice(idx,1);
+            updateScheduledSlots();
+            updateCalendar();
+        }
+    }
+
+    // ——— Einstellungen, iCal ———
+    function saveSettings(){ alert('Einstellungen wurden gespeichert!'); }
+    function exportToICal(){ alert('Die iCal-Datei wurde heruntergeladen (simuliert)'); }
+
+    // ——— Hilfsfunktionen ———
+    function getMonthName(i){ return ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'][i]; }
+    function getMonthIndex(n){ return ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'].indexOf(n); }
+    function getWeekdayName(i){ return ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'][i]; }
+    function getInitials(n){ return n.split(' ').map(x=>x[0]).join(''); }
+    function formatDateForDisplay(s){ const [y,m,d]=s.split('-'); return `${d}.${m}.${y}`; }
+
+    // ——— CSS-Fix für Dashboard besser lesbar ———
+    const styleFix = `
+        .admin-content { background-color: var(--card); }
+    `;
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = styleFix;
+    document.head.appendChild(styleEl);
+</script>
+
+</body>
+</html>

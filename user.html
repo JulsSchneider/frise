@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>Meine Termine – Friseursalon</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Meine Termine</h1>
+
+  <!-- Mobiler Kalender -->
+  <div id="calendar-section-user">
+    <div class="calendar-wrapper">
+      <div class="calendar-header">
+        <h2 id="current-month-year">Juni 2025</h2>
+        <div class="calendar-nav">
+          <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+          <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      
+      <div class="weekdays">
+        <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+      </div>
+      
+      <div class="calendar-days" id="mobile-calendar-days">
+        <!-- Wird per JS befüllt -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TAGESANSICHT POPUP -->
+  <div class="day-popup" id="day-popup">
+    <div class="day-popup-content">
+      <div class="day-popup-header">
+        <h3 id="popup-date-title">Termine am ...</h3>
+        <button class="close-popup" onclick="closeDayPopup()">&times;</button>
+      </div>
+      <div class="popup-slots-list" id="popup-slots-list">
+        <!-- Wird per JS befüllt -->
+      </div>
+    </div>
+  </div>
+
+  <!-- BUCHUNGSPOPUP -->
+  <div class="booking-popup" id="booking-popup">
+    <div class="booking-popup-content">
+      <div class="booking-popup-header">
+        <h3>Termin buchen</h3>
+        <button class="close-booking-popup" onclick="closeBookingPopup()">&times;</button>
+      </div>
+      <div class="booking-form">
+        <p id="booking-slot-info" style="font-weight: 500; color: #6f42c1;"></p>
+        
+        <input type="text" id="booking-name" placeholder="Ihr vollständiger Name" required>
+        <input type="email" id="booking-email" placeholder="Ihre Email-Adresse" required>
+        <input type="tel" id="booking-phone" placeholder="Telefonnummer (optional)">
+        
+        <button onclick="confirmMobileBooking()">Termin verbindlich buchen</button>
+        <button class="secondary" onclick="closeBookingPopup()">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kommende Termine des Kunden -->
+  <div id="appointments-section">
+    <h2>Meine kommenden Termine</h2>
+    <div class="table-responsive">
+      <table id="userAppointmentsTable">
+        <tr>
+          <th>Datum</th><th>Uhrzeit</th><th>Service</th><th>Aktion</th>
+        </tr>
+        <!-- Einträge werden per JS eingefügt -->
+      </table>
+    </div>
+  </div>
+
+  <!-- Vergangene Termine des Kunden -->
+  <div id="past-section">
+    <h2>Vergangene Termine</h2>
+    <div class="table-responsive">
+      <table id="pastAppointmentsTable">
+        <tr>
+          <th>Datum</th><th>Uhrzeit</th><th>Service</th>
+        </tr>
+        <!-- Einträge werden per JS eingefügt -->
+      </table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
